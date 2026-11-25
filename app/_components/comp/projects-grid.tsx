@@ -12,6 +12,8 @@ import { Projects, type Project } from "../datas/projects";
 
 config.autoAddCss = false;
 
+const TOAST_DURATION = 5000;
+
 function ModalSection({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <section className="mt-8">
@@ -36,21 +38,24 @@ function BulletList({ items }: { items: string[] }) {
     );
 }
 
-// GitHub + live link buttons. Each one only renders if the project has that URL.
+// GitHub button only renders if the project has a repo. The LINK button always renders:
+// it opens the live site if there is one, otherwise it triggers the "not deployed" toast.
 function ProjectLinks({
     name,
     github,
     link,
+    onLinkUnavailable,
     className = "",
     padding = "py-2",
 }: {
     name: string;
     github?: string;
     link?: string;
+    onLinkUnavailable: () => void;
     className?: string;
     padding?: string;
 }) {
-    if (!github && !link) return null;
+    const linkClasses = `flex flex-1 cursor-pointer items-center justify-center gap-2 border-2 border-[#3dff7a] bg-[#3dff7a] px-3 ${padding} text-[#120f17] shadow-[3px_3px_0_0_#120f17] transition-all hover:bg-[#120f17] hover:text-[#3dff7a] active:translate-x-0.75 active:translate-y-0.75 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`;
 
     return (
         <div className={`flex gap-3 font-archivoblack text-xs tracking-wide ${className}`}>
@@ -67,17 +72,27 @@ function ProjectLinks({
                 </a>
             )}
 
-            {link && (
+            {link ? (
                 <a
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Open ${name} live site`}
-                    className={`flex flex-1 cursor-pointer items-center justify-center gap-2 border-2 border-[#3dff7a] bg-[#3dff7a] px-3 ${padding} text-[#120f17] shadow-[3px_3px_0_0_#120f17] transition-all hover:bg-[#120f17] hover:text-[#3dff7a] active:translate-x-0.75 active:translate-y-0.75 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
+                    className={linkClasses}
                 >
                     <span>LINK</span>
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-sm" />
                 </a>
+            ) : (
+                <button
+                    type="button"
+                    onClick={onLinkUnavailable}
+                    aria-label={`${name} live site (not deployed yet)`}
+                    className={linkClasses}
+                >
+                    <span>LINK</span>
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-sm" />
+                </button>
             )}
         </div>
     );
@@ -101,7 +116,13 @@ const cardVariants: Variants = {
 
 export default function ProjectsGrid() {
     const [selected, setSelected] = useState<Project | null>(null);
+    // A new object is created on every click, so clicking again restarts the 5s timer.
+    const [toast, setToast] = useState<{ message: string } | null>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+    const showNotDeployedToast = () => {
+        setToast({ message: "Website for this project hasn't been deployed yet." });
+    };
 
     // Close on Escape, lock page scroll, and focus the close button while the popup is open.
     useEffect(() => {
@@ -121,6 +142,14 @@ export default function ProjectsGrid() {
             document.removeEventListener("keydown", onKeyDown);
         };
     }, [selected]);
+
+    // Auto-dismiss the toast after 5 seconds.
+    useEffect(() => {
+        if (!toast) return;
+
+        const timer = setTimeout(() => setToast(null), TOAST_DURATION);
+        return () => clearTimeout(timer);
+    }, [toast]);
 
     return (
         <div className="mt-12">
@@ -185,6 +214,7 @@ export default function ProjectsGrid() {
                                 name={proj.pName}
                                 github={proj.pGithub}
                                 link={proj.pLink}
+                                onLinkUnavailable={showNotDeployedToast}
                                 className="shrink-0 px-5 pb-5"
                             />
                         </motion.div>
@@ -310,6 +340,7 @@ export default function ProjectsGrid() {
                                     name={selected.pName}
                                     github={selected.pGithub}
                                     link={selected.pLink}
+                                    onLinkUnavailable={showNotDeployedToast}
                                     className="mt-8"
                                     padding="py-3"
                                 />
@@ -318,6 +349,26 @@ export default function ProjectsGrid() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Toast: sits above the modal (z-60 vs the modal's z-50) */}
+            <div className="pointer-events-none fixed inset-x-0 top-4 z-60 flex justify-center px-4 sm:top-6">
+                <AnimatePresence>
+                    {toast && (
+                        <motion.div
+                            key="project-toast"
+                            role="status"
+                            aria-live="polite"
+                            initial={{ opacity: 0, y: -24 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -24 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="pointer-events-auto max-w-md border-2 border-[#3dff7a] bg-[#121212] px-4 py-3 font-kumbh text-sm text-white shadow-[4px_4px_0_0_#3dff7a] sm:text-base"
+                        >
+                            {toast.message}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 }
