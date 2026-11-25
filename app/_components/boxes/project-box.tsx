@@ -14,6 +14,8 @@ import { Projects, type Project } from "../datas/projects";
 
 config.autoAddCss = false;
 
+const TOAST_DURATION = 5000;
+
 function ModalSection({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <section className="mt-6 sm:mt-8">
@@ -42,16 +44,18 @@ function ProjectLinks({
     name,
     github,
     link,
+    onLinkUnavailable,
     className = "",
     padding = "py-2",
 }: {
     name: string;
     github?: string;
     link?: string;
+    onLinkUnavailable: () => void;
     className?: string;
     padding?: string;
 }) {
-    if (!github && !link) return null;
+    const linkClasses = `flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-2 border-[#3dff7a] bg-[#3dff7a] px-3 ${padding} text-[#120f17] shadow-[3px_3px_0_0_#120f17] transition-all hover:bg-[#120f17] hover:text-[#3dff7a] active:translate-x-0.75 active:translate-y-0.75 active:shadow-none`;
 
     return (
         <div className={`flex gap-3 font-archivoblack text-xs tracking-wide ${className}`}>
@@ -68,17 +72,27 @@ function ProjectLinks({
                 </a>
             )}
 
-            {link && (
+            {link ? (
                 <a
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Open ${name} live site`}
-                    className={`flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-2 border-[#3dff7a] bg-[#3dff7a] px-3 ${padding} text-[#120f17] shadow-[3px_3px_0_0_#120f17] transition-all hover:bg-[#120f17] hover:text-[#3dff7a] active:translate-x-0.75 active:translate-y-0.75 active:shadow-none`}
+                    className={linkClasses}
                 >
                     <span>LINK</span>
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-sm" />
                 </a>
+            ) : (
+                <button
+                    type="button"
+                    onClick={onLinkUnavailable}
+                    aria-label={`${name} live site (not deployed yet)`}
+                    className={linkClasses}
+                >
+                    <span>LINK</span>
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-sm" />
+                </button>
             )}
         </div>
     );
@@ -103,6 +117,8 @@ const cardVariants: Variants = {
 export default function ProjectBox() {
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState<Project | null>(null);
+    // A new object is created on every click, so clicking again restarts the 5s timer.
+    const [toast, setToast] = useState<{ message: string } | null>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
 
     const mounted = useSyncExternalStore(
@@ -110,6 +126,10 @@ export default function ProjectBox() {
         () => true,
         () => false
     );
+
+    const showNotDeployedToast = () => {
+        setToast({ message: "Website for this project hasn't been deployed yet." });
+    };
 
     useEffect(() => {
         if (!selected) return;
@@ -128,6 +148,13 @@ export default function ProjectBox() {
             document.removeEventListener("keydown", onKeyDown);
         };
     }, [selected]);
+
+    useEffect(() => {
+        if (!toast) return;
+
+        const timer = setTimeout(() => setToast(null), TOAST_DURATION);
+        return () => clearTimeout(timer);
+    }, [toast]);
 
     return (
         <>
@@ -207,6 +234,7 @@ export default function ProjectBox() {
                                             name={proj.pName}
                                             github={proj.pGithub}
                                             link={proj.pLink}
+                                            onLinkUnavailable={showNotDeployedToast}
                                             className="shrink-0 px-4 pb-5 sm:px-5"
                                         />
                                     </motion.div>
@@ -346,6 +374,7 @@ export default function ProjectBox() {
                                             name={selected.pName}
                                             github={selected.pGithub}
                                             link={selected.pLink}
+                                            onLinkUnavailable={showNotDeployedToast}
                                             className="mt-8"
                                             padding="py-3"
                                         />
@@ -354,6 +383,29 @@ export default function ProjectBox() {
                             </motion.div>
                         )}
                     </AnimatePresence>,
+                    document.body
+                )}
+
+            {mounted &&
+                createPortal(
+                    <div className="pointer-events-none fixed inset-x-0 top-4 z-10000 flex justify-center px-4 sm:top-6">
+                        <AnimatePresence>
+                            {toast && (
+                                <motion.div
+                                    key="project-toast"
+                                    role="status"
+                                    aria-live="polite"
+                                    initial={{ opacity: 0, y: -24 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -24 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className="pointer-events-auto max-w-md border-2 border-[#3dff7a] bg-[#121212] px-4 py-3 font-kumbh text-sm text-white shadow-[4px_4px_0_0_#3dff7a] sm:text-base"
+                                >
+                                    {toast.message}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>,
                     document.body
                 )}
         </>
