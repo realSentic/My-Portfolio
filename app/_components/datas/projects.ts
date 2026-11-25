@@ -225,9 +225,54 @@ export const Projects: Project[] = [
             "Learned to manage development time under strict deadlines.",
             "Gained experience following technical direction and contributing under another programmer's leadership."
         ]
-    }
+    },
 
+    {
+        pName: "Sondr.",
+        pImage: "/screenshots/placeholder.webp", // TODO: replace with the real screenshot, e.g. /screenshots/sondr.webp
+        pShortDesc: "A playlist sharing website where users create playlists, join weekly themed challenges, and engage through comments and likes.",
+        pDesc: "A full-stack playlist sharing platform where users can create and share playlists, take part in weekly themed challenges, and interact with the community through comments and likes.",
+        pLanguage: [
+            "Next.js",
+            "HTML",
+            "CSS",
+            "Tailwind CSS",
+            "Motion",
+            "Supabase",
+            "shadcn/ui",
+        ],
+        pGithub: "https://github.com/realSentic/sondr",
 
+        pOverview: "Sondr is a solo full-stack project built around sharing music through playlists. Users can create an account, build and share their own playlists, and engage with other people's playlists through comments and likes. A weekly Challenges feature announces a new theme each week, and users can submit playlists that fit it. The project was built with Next.js and Supabase, and it was my first time working with Supabase as a backend and database.",
 
+        pRole: "Full-Stack Developer",
+        pTimeline: "2 weeks",
+        pStatus: "Completed",
+
+        pFeatures: [
+            "Authentication: Lets users create accounts and sign in to access the platform's features.",
+            "Playlist Creation: Allows users to create and share their own playlists.",
+            "Weekly Challenges: Announces a new theme each week that users can create playlists for.",
+            "Comments: Lets users leave comments on playlists.",
+            "Likes: Lets users like playlists they enjoy.",
+            "Animated UI: Uses Motion for smooth animations and transitions across the interface.",
+        ],
+
+        pChallenges: [
+            {
+                challenge: "Learning Supabase for the first time and understanding how to integrate it as the project's database.",
+                solution: "Worked through Supabase's tools and documentation, and quickly adapted to its approach to database integration after the initial learning curve.",
+            },
+        ],
+
+        pLearned: [
+            "Gained hands-on experience with Supabase as a backend and database platform.",
+            "Improved my understanding of database schema design and how to structure related data.",
+            "Strengthened my full-stack skills by building a complete Next.js application on my own.",
+            "Gained experience building a community-driven feature set, including comments, likes, and recurring challenges.",
+        ],
+    }, 
+
+      
 
 ];
