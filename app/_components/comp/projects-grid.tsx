@@ -38,8 +38,6 @@ function BulletList({ items }: { items: string[] }) {
     );
 }
 
-// GitHub button only renders if the project has a repo. The LINK button always renders:
-// it opens the live site if there is one, otherwise it triggers the "not deployed" toast.
 function ProjectLinks({
     name,
     github,
