@@ -18,7 +18,7 @@ export type Project = {
 export const Projects: Project[] = [
     {
         pName: "Sondr.",
-        pImage: "/screenshots/placeholder.webp", // TODO: replace with the real screenshot, e.g. /screenshots/sondr.webp
+        pImage: "/screenshots/sondr.webp",
         pShortDesc: "A playlist sharing website where users create playlists, join weekly themed challenges, and engage through comments and likes.",
         pDesc: "A full-stack playlist sharing platform where users can create and share playlists, take part in weekly themed challenges, and interact with the community through comments and likes.",
         pLanguage: [
@@ -64,7 +64,7 @@ export const Projects: Project[] = [
 
     {
         pName: "Kissy Cafe: Inventory Management System",
-        pImage: "/screenshots/placeholder.webp", // TODO: replace with the real screenshot, e.g. /screenshots/kissycafe.webp
+        pImage: "/screenshots/kissycafe.webp",
         pShortDesc: "A full-stack inventory management system for a café, built with a Django backend and a cloud-hosted MySQL database.",
         pDesc: "A full-stack inventory management system built to help a café track, organize, and manage its stock, powered by a Django backend and a cloud-hosted MySQL database shared across the development team.",
         pLanguage: [
