@@ -1,7 +1,8 @@
 import { FloatingNav } from "../_components/comp/navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 
+import ResumeButton from "../_components/comp/resume-button";
 import Pattern from "../_components/comp/pattern";
 import Halftone from "../_components/comp/halftone";
 import AboutBox from "../_components/boxes/about-box";
@@ -53,10 +54,7 @@ export default function Home() {
                                 <FontAwesomeIcon icon={faFolderOpen} className="text-sm transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                             </a>
 
-                            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="group flex min-h-11 min-w-32 flex-1 cursor-pointer items-center justify-center gap-2 border-2 border-[#3dff7a] bg-[#3dff7a] px-3 py-2 text-[#120f17] shadow-[3px_3px_0_0_#120f17] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#120f17] hover:text-[#3dff7a] hover:shadow-[5px_5px_0_0_#3dff7a] active:translate-x-0.75 active:translate-y-0.75 active:shadow-none">
-                                <span>Resume</span>
-                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-sm transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                            </a>
+                            <ResumeButton />
                         </div>
                     </div>
 
